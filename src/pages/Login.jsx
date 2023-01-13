@@ -4,7 +4,7 @@ const Container = styled.div`
     width: 100vw;
     height: 100vh;
     background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-        url('https://images.unsplash.com/photo-1627483297929-37f416fec7cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80')
+        url('https://images.unsplash.com/photo-1472806426350-603610d85659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80')
             center;
     background-size: cover;
     display: flex;
@@ -13,7 +13,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-    width: 40%;
+    width: 25%;
     padding: 20px;
     background-color: white;
 `;
@@ -26,19 +26,14 @@ const Title = styled.h1`
 
 const Form = styled.form`
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
 `;
 
 const Input = styled.input`
     flex: 1;
     min-width: 40%;
-    margin: 20px 10px 0px 0px;
+    margin: 10px 0;
     padding: 10px;
-`;
-
-const Agreement = styled.span`
-    font-size: 13px;
-    margin: 20px 0px;
 `;
 
 const Button = styled.button`
@@ -48,29 +43,31 @@ const Button = styled.button`
     background-color: teal;
     color: white;
     cursor: pointer;
+    margin-bottom: 10px;
 `;
 
-const Register = () => {
+const Link = styled.a`
+    margin: 5px 0px;
+    font-size: 11px;
+    text-decoration: underline;
+    cursor: pointer;
+`;
+
+const Login = () => {
     return (
         <Container>
             <Wrapper>
-                <Title>CREATE AN ACCOUNT</Title>
+                <Title>SIGN IN</Title>
                 <Form>
-                    <Input placeholder="Name" />
-                    <Input placeholder="Last name" />
                     <Input placeholder="Username" />
-                    <Input placeholder="Email" />
                     <Input placeholder="Password" />
-                    <Input placeholder="Confirm password" />
-                    <Agreement>
-                        By creating an account, I consent to the processing of my personal data in
-                        accordance with the <b>PRIVACY POLICY</b>.
-                    </Agreement>
-                    <Button>CREATE</Button>
+                    <Button>LOGIN</Button>
+                    <Link>FORGOT PASSWORD?</Link>
+                    <Link>CREATE AN ACCOUNT</Link>
                 </Form>
             </Wrapper>
         </Container>
     );
 };
 
-export default Register;
+export default Login;
