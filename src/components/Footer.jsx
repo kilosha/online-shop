@@ -1,8 +1,18 @@
-import { Facebook, Instagram, MailOutline, Phone, Pinterest, Place, Twitter } from '@mui/icons-material';
+import {
+    Facebook,
+    Instagram,
+    MailOutline,
+    Phone,
+    Pinterest,
+    Place,
+    Twitter,
+} from '@mui/icons-material';
 import styled from 'styled-components';
+import { mobile } from '../responsive';
 
 const Container = styled.div`
     display: flex;
+    ${mobile({ flexDirection: 'column' })};
 `;
 
 const Left = styled.div`
@@ -28,7 +38,7 @@ const SocialIcon = styled.div`
     height: 40px;
     border-radius: 50%;
     color: white;
-    background-color: #${props => props.color};
+    background-color: #${(props) => props.color};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,6 +49,7 @@ const SocialIcon = styled.div`
 const Center = styled.div`
     flex: 1;
     padding: 15px;
+    ${mobile({ display: 'none' })};
 `;
 
 const Title = styled.h3`
@@ -63,6 +74,7 @@ const ListItem = styled.li`
 const Right = styled.div`
     flex: 1;
     padding: 15px;
+    ${mobile({ backgroundColor: "#fff8f8" })};
 `;
 
 const ContactItem = styled.div`
@@ -118,13 +130,14 @@ const Footer = () => {
             <Right>
                 <Title>Contact info</Title>
                 <ContactItem>
-                    <Place style={{marginRight: "10px"}} /> 27000 Сalendula ST Corona CA 92883-8962 
+                    <Place style={{ marginRight: '10px' }} /> 27000 Сalendula ST Corona CA
+                    92883-8962
                 </ContactItem>
                 <ContactItem>
-                    <Phone style={{marginRight: "10px"}} /> +1 555 777 12
+                    <Phone style={{ marginRight: '10px' }} /> +1 555 777 12
                 </ContactItem>
                 <ContactItem>
-                    <MailOutline style={{marginRight: "10px"}} /> bestshopever@maryia.dev
+                    <MailOutline style={{ marginRight: '10px' }} /> bestshopever@maryia.dev
                 </ContactItem>
                 <Payment src="https://i.ibb.co/Qfvn4z6/payment.png"></Payment>
             </Right>
