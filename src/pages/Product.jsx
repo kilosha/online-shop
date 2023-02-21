@@ -8,6 +8,8 @@ import { mobile } from "../responsive";
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { publicRequest } from '../utils/requestMethods';
+import { useDispatch } from 'react-redux';
+import { addProduct }  from '../redux/cartSlice';
 
 const Container = styled.div``;
 
@@ -128,6 +130,7 @@ const Product = () => {
     const [quantity, setQuantity] = useState(1);
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
+    const dispatch = useDispatch();
 
     const handleQuantity = type => {
         if (type === 'add') {
@@ -150,6 +153,10 @@ const Product = () => {
         getProduct();
 
     }, [id]);
+
+    const handleAddToCartClick = () => {
+        dispatch(addProduct({...product, quantity, size, color}));
+    }
 
     return (
         <Container>
@@ -187,7 +194,7 @@ const Product = () => {
                             <Amount>{quantity}</Amount>
                             <Add onClick={() => handleQuantity('add')}/>
                         </AmountContainer>
-                        <Button>ADD TO CART</Button>
+                        <Button onClick={handleAddToCartClick}>ADD TO CART</Button>
                     </AddContainer>
                 </InfoContainer>
             </Wrapper>

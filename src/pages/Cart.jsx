@@ -1,4 +1,5 @@
 import { Add, Remove } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
@@ -155,6 +156,7 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
+    const cart = useSelector(state => state.cart);
     return (
         <Container>
             <Navbar />
@@ -171,63 +173,40 @@ const Cart = () => {
                 </Top>
                 <Bottom>
                     <Info>
-                        <Product>
-                            <ProductDetail>
-                                <Image src="https://nyblobstoreprod.blob.core.windows.net/product-images-public/e5b25204036e5c0c67f5f4e4df66c25e.png"></Image>
+                        { cart.products?.map( product => (
+                            <Product>
+                             <ProductDetail>
+                                <Image src={product.img}></Image>
                                 <Details>
                                     <ProductName>
-                                        <b>Product: </b> Long sleeve with lacing
+                                        <b>Product: </b> {product.title}
                                     </ProductName>
                                     <ProductID>
-                                        <b>ID: </b> 7771849
+                                        <b>ID: </b> {product._id}
                                     </ProductID>
-                                    <ProductColor color="black" />
+                                    <ProductColor color={product.color} />
                                     <ProductSize>
-                                        <b>Size: </b> L
+                                        <b>Size: </b> {product.size}
                                     </ProductSize>
                                 </Details>
                             </ProductDetail>
                             <PriceDetail>
                                 <ProductAmountContainer>
                                     <Remove />
-                                    <ProductAmount>1</ProductAmount>
+                                    <ProductAmount>{product.quantity}</ProductAmount>
                                     <Add />
                                 </ProductAmountContainer>
-                                <ProductPrice>$ 15.99</ProductPrice>
+                                <ProductPrice>$ {product.price}</ProductPrice>
                             </PriceDetail>
-                        </Product>
-                        <Hr />
-                        <Product>
-                            <ProductDetail>
-                                <Image src="https://nyblobstoreprod.blob.core.windows.net/product-images-public/20ed35b18fdd333e72a9bcb3b7b6754c.png"></Image>
-                                <Details>
-                                    <ProductName>
-                                        <b>Product: </b> Basic sweatpants
-                                    </ProductName>
-                                    <ProductID>
-                                        <b>ID: </b> 5552114
-                                    </ProductID>
-                                    <ProductColor color="pink" />
-                                    <ProductSize>
-                                        <b>Size: </b> L
-                                    </ProductSize>
-                                </Details>
-                            </ProductDetail>
-                            <PriceDetail>
-                                <ProductAmountContainer>
-                                    <Remove />
-                                    <ProductAmount>1</ProductAmount>
-                                    <Add />
-                                </ProductAmountContainer>
-                                <ProductPrice>$ 20.99</ProductPrice>
-                            </PriceDetail>
-                        </Product>
+                            </Product>
+                        ))}
+                        <Hr/>
                     </Info>
                     <Summary>
                         <SummaryTitle>ORDER SUMMARY</SummaryTitle>
                         <SummaryItem>
                             <SummaryItemText>Subtotal</SummaryItemText>
-                            <SummaryItemPrice>$ 36.98</SummaryItemPrice>
+                            <SummaryItemPrice>$ {cart.totalSum}</SummaryItemPrice>
                         </SummaryItem>
                         <SummaryItem>
                             <SummaryItemText>Estimated Shipping</SummaryItemText>
@@ -239,7 +218,7 @@ const Cart = () => {
                         </SummaryItem>
                         <SummaryItem>
                             <SummaryItemText>Total</SummaryItemText>
-                            <SummaryItemPrice>$ 40.98</SummaryItemPrice>
+                            <SummaryItemPrice>$ {cart.totalSum}</SummaryItemPrice>
                         </SummaryItem>
                         <Button>CHECKOUT NOW</Button>
                     </Summary>
