@@ -5,6 +5,9 @@ import Navbar from '../components/Navbar';
 import Announcement from "../components/Announcement";
 import Newsletter from '../components/Newsletter';
 import { mobile } from "../responsive";
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { publicRequest } from '../utils/requestMethods';
 
 const Container = styled.div``;
 
@@ -60,19 +63,22 @@ const Filter = styled.div`
 const FilterTitle = styled.span`
     font-size: 20px;
     font-weight: 200;
+    margin-right: 10px;
 `;
 
 const FilterColor = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50%;
+    border: ${props => props.selected ? '1.5px solid teal' :  '1px solid darkgray'};
     background-color: ${props => props.color};
     margin: 0px 5px;
     cursor: pointer;
+    opacity: ${props => props.selected ? 1 :  0.5};
 `;
 
 const FilterSize = styled.select`
-    margin-left: 10px;
+    margin-left: 5px;
     padding: 5px;
 `;
 
@@ -116,46 +122,70 @@ const Button = styled.button`
 `;
 
 const Product = () => {
+    const location = useLocation();
+    const id = location.pathname.split('/')[2];
+    const [product, setProduct] = useState({});
+    const [quantity, setQuantity] = useState(1);
+    const [color, setColor] = useState('');
+    const [size, setSize] = useState('');
+
+    const handleQuantity = type => {
+        if (type === 'add') {
+           setQuantity(quantity+1);
+        } else {
+            quantity > 1 && setQuantity(quantity-1);
+        }
+    }
+    
+    useEffect(()=> {
+        const getProduct = async () => {
+            try {
+                const res = await publicRequest.get(`products/product/${id}`);
+                setProduct(res.data);
+                setColor(res.data.color?.[0]);
+                setSize(res.data.size?.[0]);
+            } catch (e) {}
+        }
+
+        getProduct();
+
+    }, [id]);
+
     return (
         <Container>
             <Navbar />
             <Announcement/>
             <Wrapper>
                 <ImgContainer>
-                    <Image src="https://nyblobstoreprod.blob.core.windows.net/product-images-public/2d67289881551f843886ef403749a37e.png" />
+                    <Image src={product.img} />
                 </ImgContainer>
                 <InfoContainer>
-                    <Title>T-shirt with print</Title>
+                    <Title>{product.title}</Title>
                     <Desc>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec venenatis,
-                        dolor in finibus malesuada, lectus ipsum porta nunc, at iaculis arcu nisi
-                        sed mauris. Nulla fermentum vestibulum ex, eget tristique tortor pretium ut.
-                        Curabitur elit justo, consequat id condimentum ac, volutpat ornare.
+                        {product.desc}
                     </Desc>
-                    <Price>$ 15</Price>
+                    <Price>$ {product.price}</Price>
                     <FilterContainer>
                         <Filter>
                             <FilterTitle>Color</FilterTitle>
-                            <FilterColor color="black" />
-                            <FilterColor color="darkblue" />
-                            <FilterColor color="gray" />
+                            { product.color && product.color.map(c => (
+                                <FilterColor selected={color === c} onClick={() => setColor(c)} color={c} key={c}/>
+                            ))}
                         </Filter>
                         <Filter>
                             <FilterTitle>Size</FilterTitle>
-                            <FilterSize>
-                                <FilterSizeOption>XS</FilterSizeOption>
-                                <FilterSizeOption>S</FilterSizeOption>
-                                <FilterSizeOption>M</FilterSizeOption>
-                                <FilterSizeOption>L</FilterSizeOption>
-                                <FilterSizeOption>XL</FilterSizeOption>
+                            <FilterSize onChange={(e) => setSize(e.target.value)}>
+                                { product.size && product.size.map(s => (
+                                    <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                                ))}
                             </FilterSize>
                         </Filter>
                     </FilterContainer>
                     <AddContainer>
                         <AmountContainer>
-                            <Remove/>
-                            <Amount>1</Amount>
-                            <Add/>
+                            <Remove onClick={() => handleQuantity('remove')} />
+                            <Amount>{quantity}</Amount>
+                            <Add onClick={() => handleQuantity('add')}/>
                         </AmountContainer>
                         <Button>ADD TO CART</Button>
                     </AddContainer>
