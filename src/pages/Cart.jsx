@@ -1,17 +1,23 @@
-import { Add, Remove } from "@mui/icons-material";
-import { useSelector } from "react-redux";
-import styled from "styled-components";
-import Announcement from "../components/Announcement";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import { mobile } from "../responsive";
+import { Add, Remove } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import StripeCheckout from 'react-stripe-checkout';
+import styled from 'styled-components';
+import Announcement from '../components/Announcement';
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
+import { mobile } from '../responsive';
+import { publicRequest } from '../utils/requestMethods';
+
+const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div``;
 
 const Wrapper = styled.div`
     padding: 20px;
     border-bottom: 1px solid #908383;
-    ${mobile({ padding: "10px" })};
+    ${mobile({ padding: '10px' })};
 `;
 
 const Title = styled.h1`
@@ -31,13 +37,13 @@ const TopButton = styled.button`
     padding: 10px;
     font-weight: 600;
     cursor: pointer;
-    border: ${props => props.type === "filled" && "none"};
-    background-color: ${props => props.type === "filled" ? "black": "transparent"};
-    color: ${props => props.type === "filled" && "white"};
+    border: ${(props) => props.type === 'filled' && 'none'};
+    background-color: ${(props) => (props.type === 'filled' ? 'black' : 'transparent')};
+    color: ${(props) => props.type === 'filled' && 'white'};
 `;
 
 const TopTexts = styled.div`
-  ${mobile({ display: "none" })};
+    ${mobile({ display: 'none' })};
 `;
 
 const TopText = styled.span`
@@ -49,7 +55,7 @@ const TopText = styled.span`
 const Bottom = styled.div`
     display: flex;
     justify-content: space-between;
-    ${mobile({ flexDirection: "column" })};
+    ${mobile({ flexDirection: 'column' })};
 `;
 
 const Info = styled.div`
@@ -59,7 +65,7 @@ const Info = styled.div`
 const Product = styled.div`
     display: flex;
     justify-content: space-between;
-    ${mobile({ flexDirection: "column" })};
+    ${mobile({ flexDirection: 'column' })};
 `;
 
 const ProductDetail = styled.div`
@@ -86,7 +92,7 @@ const ProductColor = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: ${props => props.color};
+    background-color: ${(props) => props.color};
 `;
 
 const ProductSize = styled.span``;
@@ -108,13 +114,13 @@ const ProductAmountContainer = styled.div`
 const ProductAmount = styled.div`
     font-size: 24px;
     margin: 5px;
-    ${mobile({ margin: "5px 15px" })};
+    ${mobile({ margin: '5px 15px' })};
 `;
 
 const ProductPrice = styled.div`
     font-size: 30px;
     font-weight: 200;
-    ${mobile({ marginBottom: "20px" })};
+    ${mobile({ marginBottom: '20px' })};
 `;
 
 const Hr = styled.hr`
@@ -139,8 +145,8 @@ const SummaryItem = styled.div`
     margin: 30px 0px;
     display: flex;
     justify-content: space-between;
-    font-weight: ${props => props.type === "total" && "500"};
-    font-size: ${props => props.type === "total" && "24px"};
+    font-weight: ${(props) => props.type === 'total' && '500'};
+    font-size: ${(props) => props.type === 'total' && '24px'};
 `;
 
 const SummaryItemText = styled.span``;
@@ -153,10 +159,32 @@ const Button = styled.button`
     background-color: black;
     color: white;
     font-weight: 600;
+    cursor: pointer;
 `;
 
 const Cart = () => {
-    const cart = useSelector(state => state.cart);
+    const cart = useSelector((state) => state.cart);
+    const [stripeToken, setStripeToken] = useState(null);
+    const navigate = useNavigate();
+
+    const onToken = token => {
+        setStripeToken(token);
+    }
+
+    useEffect(() => {
+        const sendRequest = async () => {
+            try {
+                const res = await publicRequest.post("/checkout/payload", {
+                    tokenId: stripeToken.id,
+                    amount: cart.total*100
+                }); 
+                navigate('/success', {data: res.data});
+            } catch (err) {}
+        }
+
+        stripeToken && cart.total >= 1 && sendRequest();
+    }, [stripeToken, cart.total, navigate]);
+
     return (
         <Container>
             <Navbar />
@@ -173,34 +201,34 @@ const Cart = () => {
                 </Top>
                 <Bottom>
                     <Info>
-                        { cart.products?.map( product => (
+                        {cart.products?.map((product) => (
                             <Product>
-                             <ProductDetail>
-                                <Image src={product.img}></Image>
-                                <Details>
-                                    <ProductName>
-                                        <b>Product: </b> {product.title}
-                                    </ProductName>
-                                    <ProductID>
-                                        <b>ID: </b> {product._id}
-                                    </ProductID>
-                                    <ProductColor color={product.color} />
-                                    <ProductSize>
-                                        <b>Size: </b> {product.size}
-                                    </ProductSize>
-                                </Details>
-                            </ProductDetail>
-                            <PriceDetail>
-                                <ProductAmountContainer>
-                                    <Remove />
-                                    <ProductAmount>{product.quantity}</ProductAmount>
-                                    <Add />
-                                </ProductAmountContainer>
-                                <ProductPrice>$ {product.price}</ProductPrice>
-                            </PriceDetail>
+                                <ProductDetail>
+                                    <Image src={product.img}></Image>
+                                    <Details>
+                                        <ProductName>
+                                            <b>Product: </b> {product.title}
+                                        </ProductName>
+                                        <ProductID>
+                                            <b>ID: </b> {product._id}
+                                        </ProductID>
+                                        <ProductColor color={product.color} />
+                                        <ProductSize>
+                                            <b>Size: </b> {product.size}
+                                        </ProductSize>
+                                    </Details>
+                                </ProductDetail>
+                                <PriceDetail>
+                                    <ProductAmountContainer>
+                                        <Remove />
+                                        <ProductAmount>{product.quantity}</ProductAmount>
+                                        <Add />
+                                    </ProductAmountContainer>
+                                    <ProductPrice>$ {product.price}</ProductPrice>
+                                </PriceDetail>
                             </Product>
                         ))}
-                        <Hr/>
+                        <Hr />
                     </Info>
                     <Summary>
                         <SummaryTitle>ORDER SUMMARY</SummaryTitle>
@@ -220,7 +248,17 @@ const Cart = () => {
                             <SummaryItemText>Total</SummaryItemText>
                             <SummaryItemPrice>$ {cart.totalSum}</SummaryItemPrice>
                         </SummaryItem>
-                        <Button>CHECKOUT NOW</Button>
+                        <StripeCheckout
+                            name="Luxury&Comfort" 
+                            image="https://avatars.githubusercontent.com/u/51097343?v=4"
+                            billingAddress
+                            shippingAddress
+                            description={`Total sum: $ ${cart.totalSum}`}
+                            amount={cart.total*100}
+                            token={onToken} 
+                            stripeKey={KEY}>
+                            <Button>CHECKOUT NOW</Button>
+                        </StripeCheckout>
                     </Summary>
                 </Bottom>
             </Wrapper>
