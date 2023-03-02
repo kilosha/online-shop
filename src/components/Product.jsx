@@ -66,6 +66,16 @@ const Icon = styled.div`
     }
 `;
 
+const StyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+
+    &:focus, &:hover, &:visited, &:link, &:active {
+        text-decoration: none;
+        color: black;
+    }
+`;
+
 const Product = ({item}) => {
   return (
     <Container>
@@ -76,9 +86,9 @@ const Product = ({item}) => {
                 <ShoppingCartOutlined/>
             </Icon>
             <Icon>
-                <Link to={`/product/${item._id}`}>
+                <StyledLink to={`/product/${item._id}`}>
                     <SearchOutlined/>
-                </Link>
+                </StyledLink>
             </Icon>
             <Icon>
                 <FavoriteBorderOutlined/>

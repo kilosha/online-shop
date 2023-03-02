@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { mobile } from '../responsive';
 
@@ -52,6 +53,27 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
+const LinkText = styled.span`
+    margin: 5px 0px;
+    font-size: 11px;
+    text-decoration: underline;
+    cursor: pointer;
+`;
+
+const StyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+
+    &:focus,
+    &:hover,
+    &:visited,
+    &:link,
+    &:active {
+        text-decoration: none;
+        color: black;
+    }
+`;
+
 const Register = () => {
     return (
         <Container>
@@ -69,6 +91,9 @@ const Register = () => {
                         accordance with the <b>PRIVACY POLICY</b>.
                     </Agreement>
                     <Button>CREATE</Button>
+                    <StyledLink to={"/login"}>
+                        <LinkText>ALREADY HAVE AN ACCOUNT? LOGIN</LinkText>
+                    </StyledLink>
                 </Form>
             </Wrapper>
         </Container>
