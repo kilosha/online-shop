@@ -143,7 +143,7 @@ const Product = () => {
     useEffect(()=> {
         const getProduct = async () => {
             try {
-                const res = await publicRequest.get(`products/product/${id}`);
+                const res = await publicRequest.get(`/products/product/${id}`);
                 setProduct(res.data);
                 setColor(res.data.color?.[0]);
                 setSize(res.data.size?.[0]);
