@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { mobile } from '../responsive';
 import { login } from '../redux/apiCalls';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { clearError } from '../redux/userSlice';
 
 const Container = styled.div`
     width: 100vw;
@@ -55,7 +58,7 @@ const Button = styled.button`
     }
 `;
 
-const Link = styled.a`
+const LinkText = styled.span`
     margin: 5px 0px;
     font-size: 11px;
     text-decoration: underline;
@@ -66,16 +69,40 @@ const Error = styled.span`
     color: red;
 `;
 
+const StyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+
+    &:focus,
+    &:hover,
+    &:visited,
+    &:link,
+    &:active {
+        text-decoration: none;
+        color: black;
+    }
+`;
+
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [validationError, setValidationError] = useState('');
     const dispatch = useDispatch();
     const { isFetching, error, errorMsg } = useSelector((state) => state.user);
 
     const handleLoginClick = (e) => {
         e.preventDefault();
-        login(dispatch, { username, password });
+        if (!username || !password) {
+            setValidationError('Please, fill all mandatory fields!');
+        } else {
+            login(dispatch, { username, password });
+        }
     };
+
+    useEffect(() => {
+        dispatch(clearError());
+    }, [dispatch]);
+
 
     return (
         <Container>
@@ -92,8 +119,11 @@ const Login = () => {
                         LOGIN
                     </Button>
                     {error && <Error>{errorMsg.message}</Error>}
-                    <Link>FORGOT PASSWORD?</Link>
-                    <Link>CREATE AN ACCOUNT</Link>
+                    {validationError && <Error>{validationError}</Error>}
+                    <LinkText>FORGOT PASSWORD?</LinkText>
+                    <StyledLink to={"/register"}>
+                        <LinkText>CREATE AN ACCOUNT</LinkText>
+                    </StyledLink>
                 </Form>
             </Wrapper>
         </Container>
